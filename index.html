@@ -126,6 +126,11 @@
         audioCtx: null,
         openRule: null,
 
+        // Discord Gateway Modal States
+        showDiscordModal: false,
+        discordCountdown: 3,
+        discordTimer: null,
+
         initAudio() {
             if (!this.audioCtx) {
                 const AudioContext = window.AudioContext || window.webkitAudioContext;
@@ -172,8 +177,38 @@
                     gain.gain.setValueAtTime(0.04, ctx.currentTime);
                     gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 0.06);
                     osc.start(); osc.stop(ctx.currentTime + 0.06);
+                } else if (type === 'modal') {
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(400, ctx.currentTime);
+                    osc.frequency.exponentialRampToValueAtTime(800, ctx.currentTime + 0.1);
+                    gain.gain.setValueAtTime(0.06, ctx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 0.1);
+                    osc.start(); osc.stop(ctx.currentTime + 0.1);
                 }
             } catch(e) {}
+        },
+
+        openDiscordGateway() {
+            this.playSfx('modal');
+            this.showDiscordModal = true;
+            this.discordCountdown = 3;
+            if (this.discordTimer) clearInterval(this.discordTimer);
+
+            this.discordTimer = setInterval(() => {
+                if (this.discordCountdown > 1) {
+                    this.discordCountdown--;
+                    this.playSfx('click');
+                } else {
+                    this.discordCountdown = 0;
+                    clearInterval(this.discordTimer);
+                }
+            }, 1000);
+        },
+
+        closeDiscordGateway() {
+            this.playSfx('click');
+            this.showDiscordModal = false;
+            if (this.discordTimer) clearInterval(this.discordTimer);
         },
 
         switchTab(tabName) {
@@ -268,6 +303,58 @@
         </div>
     </div>
 
+    <!-- DISCORD 3-SECOND WARNING GATEWAY MODAL -->
+    <div x-show="showDiscordModal" 
+         x-transition:enter="transition ease-out duration-300"
+         x-transition:enter-start="opacity-0 scale-90"
+         x-transition:enter-end="opacity-100 scale-100"
+         x-transition:leave="transition ease-in duration-200"
+         x-transition:leave-start="opacity-100 scale-100"
+         x-transition:leave-end="opacity-0 scale-90"
+         class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-indigo-950/90 backdrop-blur-2xl"
+         style="display: none;">
+        
+        <div class="supreme-glass p-8 sm:p-10 rounded-[2.5rem] shadow-2xl max-w-sm w-full text-center space-y-6 relative overflow-hidden border border-indigo-500/50">
+            <div class="absolute -top-20 -left-20 w-48 h-48 bg-indigo-500/30 rounded-full blur-3xl pointer-events-none animate-pulse-glow"></div>
+            
+            <div class="relative z-10 space-y-4">
+                <!-- Icon Discord & Countdown Ring -->
+                <div class="w-16 h-16 mx-auto bg-gradient-to-tr from-indigo-500 to-sky-500 rounded-2xl flex items-center justify-center text-white text-3xl shadow-xl shadow-indigo-500/30 font-bold relative">
+                    <span x-text="discordCountdown > 0 ? discordCountdown : '🚀'"></span>
+                </div>
+
+                <div class="space-y-1.5">
+                    <h3 class="font-outfit text-xl font-black text-slate-900 dark:text-white">Do you wish to continue?</h3>
+                    <p class="text-xs text-slate-500 dark:text-slate-400 font-medium">
+                        Anda akan diarahkan menuju server resmi <strong class="text-indigo-400">MoestordRP Discord</strong>. Harap tunggu sebentar...
+                    </p>
+                </div>
+
+                <!-- Timer Indicator Text -->
+                <div class="py-2 px-4 rounded-xl bg-indigo-500/10 border border-indigo-500/30 text-indigo-400 font-mono text-xs font-bold">
+                    <span x-show="discordCountdown > 0">⏳ Mohon tunggu <span x-text="discordCountdown"></span> detik...</span>
+                    <span x-show="discordCountdown === 0" class="text-emerald-400">✨ Tautan Siap Diakses!</span>
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="grid grid-cols-2 gap-3 relative z-10 pt-2">
+                <button @click="closeDiscordGateway()" 
+                    class="py-3 rounded-xl bg-slate-200 dark:bg-slate-800 hover:bg-slate-300 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 font-outfit font-bold text-xs transition shadow-sm">
+                    Batal
+                </button>
+                <a :href="discordCountdown === 0 ? 'https://discord.gg/QmN7Su3Adm' : '#'" 
+                   :target="discordCountdown === 0 ? '_blank' : '_self'"
+                   @click="if(discordCountdown === 0) { closeDiscordGateway(); }"
+                   :class="discordCountdown > 0 ? 'opacity-50 cursor-not-allowed bg-slate-600' : 'bg-gradient-to-r from-indigo-600 to-sky-500 hover:opacity-95 shadow-lg shadow-indigo-500/30 scale-105'"
+                   class="py-3 rounded-xl text-white font-outfit font-extrabold text-xs flex items-center justify-center gap-1.5 transition">
+                    <span>Masuk</span>
+                    <span>→</span>
+                </a>
+            </div>
+        </div>
+    </div>
+
     <!-- MAIN DASHBOARD CONTENT -->
     <div x-show="themeChosen" x-cloak class="min-h-screen flex flex-col relative z-10">
 
@@ -347,7 +434,6 @@
             <!-- SLIDING PILL TAB NAVIGATION -->
             <div class="flex justify-center mb-10 sm:mb-12 overflow-x-auto py-2">
                 <div class="supreme-glass p-1.5 sm:p-2 rounded-2xl sm:rounded-3xl shadow-2xl relative flex items-center w-full max-w-2xl border border-sky-500/40 min-w-[320px]">
-                    <!-- Sliding Blue Neon Pill Indicator -->
                     <div class="absolute h-[calc(100%-12px)] sm:h-[calc(100%-16px)] top-1.5 sm:top-2 rounded-xl sm:rounded-2xl bg-gradient-to-r from-sky-500 to-indigo-600 shadow-xl shadow-sky-500/35 transition-all duration-400 ease-out z-0"
                          :style="activeTab === 'pendahuluan' ? 'left: 6px; width: calc(25% - 4px);' : 
                                  activeTab === 'rules' ? 'left: calc(25% + 2px); width: calc(25% - 4px);' : 
@@ -397,13 +483,12 @@
                     </div>
 
                     <div class="space-y-5 sm:space-y-6 text-slate-700 dark:text-slate-300 text-xs sm:text-sm font-medium leading-relaxed relative z-10">
-                        
                         <div class="p-5 sm:p-6 rounded-2xl sm:rounded-3xl bg-sky-500/5 border border-sky-500/20 flex flex-col sm:flex-row items-start gap-4 sm:gap-5 shadow-sm">
                             <span class="text-3xl shrink-0">🏙️</span>
                             <div class="space-y-2">
                                 <h4 class="font-outfit font-extrabold text-sm sm:text-lg text-slate-900 dark:text-white">1. Definisi & Konsep Dasar Dunia MoestordRP</h4>
                                 <p>
-                                    <strong class="text-sky-400 font-bold">MoestordRP</strong> adalah pelopor server roleplay imersif di bawah naungan <strong class="text-slate-900 dark:text-white font-bold">An CDID Roleplay Group</strong> pada platform Roblox. Server ini dirancang secara khusus untuk menghadirkan tiruan kehidupan perkotaan yang dinamis, interaktif, dan sangat realistis. Di sini, setiap anggota tidak hanya sekadar bermain game, melainkan membangun alur cerita, meniti karier virtual, serta mengeksplorasi budaya berkendara khas Indonesia dalam suasana yang terorganisir.
+                                    <strong class="text-sky-400 font-bold">MoestordRP</strong> adalah pelopor server roleplay imersif di bawah naungan <strong class="text-slate-900 dark:text-white font-bold">An CDID Roleplay Group</strong> pada platform Roblox. Server ini dirancang secara khusus untuk menghadirkan tiruan kehidupan perkotaan CDID yang dinamis, interaktif, dan sangat realistis.
                                 </p>
                             </div>
                         </div>
@@ -413,31 +498,10 @@
                             <div class="space-y-2">
                                 <h4 class="font-outfit font-extrabold text-sm sm:text-lg text-slate-900 dark:text-white">2. Esensi Pendalaman Karakter (Roleplay Immersion)</h4>
                                 <p>
-                                    Inti dari pengalaman bermain di MoestordRP adalah komitmen penuh terhadap karakter fiktif Anda (<em class="text-indigo-400 font-semibold">In-Character / IC</em>). Anda bebas memilih jalur hidup Anda sendiri—apakah ingin menjadi warga sipil yang taat hukum, pengusaha transportasi umum, pengemudi ojek online, mekanik bengkel handal, hingga aparat penegak hukum dan tenaga medis yang siaga 24 jam. Setiap keputusan yang Anda ambil di dalam sesi harus mencerminkan kepribadian dan logika karakter tersebut, bukan diri Anda di dunia nyata (<em class="text-indigo-400 font-semibold">Out-Of-Character / OOC</em>).
+                                    Inti dari pengalaman bermain di MoestordRP adalah komitmen penuh terhadap karakter fiktif Anda (<em class="text-indigo-400 font-semibold">In-Character / IC</em>). Ambil peran sebagai warga sipil, pengemudi angkutan, mekanik, hingga aparat penegak hukum dan medis.
                                 </p>
                             </div>
                         </div>
-
-                        <div class="p-5 sm:p-6 rounded-2xl sm:rounded-3xl bg-emerald-500/5 border border-emerald-500/20 flex flex-col sm:flex-row items-start gap-4 sm:gap-5 shadow-sm">
-                            <span class="text-3xl shrink-0">⚖️</span>
-                            <div class="space-y-2">
-                                <h4 class="font-outfit font-extrabold text-sm sm:text-lg text-slate-900 dark:text-white">3. Sistem Hukum, Ketertiban, dan Keadilan Sosial</h4>
-                                <p>
-                                    Demi menciptakan lingkungan yang nyaman bagi ratusan pemain aktif, MoestordRP memberlakukan regulasi ketat terhadap segala bentuk tindakan anarkis, provokatif, atau destruktif (<em class="text-emerald-400 font-semibold">Trolling / RDM / CR</em>). Seluruh warga wajib mematuhi rambu-rambu lalu lintas, menghormati hak kepemilikan orang lain, serta menyelesaikan perselisihan faksi melalui dialog kreatif atau jalur hukum in-game yang sah, alih-alih kekerasan tanpa alasan yang masuk akal.
-                                </p>
-                            </div>
-                        </div>
-
-                        <div class="p-5 sm:p-6 rounded-2xl sm:rounded-3xl bg-purple-500/5 border border-purple-500/20 flex flex-col sm:flex-row items-start gap-4 sm:gap-5 shadow-sm">
-                            <span class="text-3xl shrink-0">🤝</span>
-                            <div class="space-y-2">
-                                <h4 class="font-outfit font-extrabold text-sm sm:text-lg text-slate-900 dark:text-white">4. Profesionalisme Manajemen & Komite Staf</h4>
-                                <p>
-                                    Keberhasilan jangka panjang MoestordRP ditopang oleh dedikasi tinggi tim manajemen, Host, Co-Host, dan Moderator yang selalu siaga mengawasi jalannya sesi. Seluruh kebijakan, pembaruan aturan, dan jadwal sesi dirancang secara transparan. Direkomendasikan menggunakan device kelas <strong class="text-purple-400 font-bold">medium-high end</strong> untuk mendapatkan pengalaman visual dan performa terbaik. Partisipasi aktif dan kepatuhan Anda terhadap arahan staff merupakan kunci utama keharmonisan komunitas ini.
-                                </p>
-                            </div>
-                        </div>
-
                     </div>
 
                     <div class="pt-4 flex justify-end relative z-10">
@@ -477,7 +541,7 @@
                         </div>
                     </div>
 
-                    <!-- In-Game Rules Grid (FIXED LAYOUT KOMPATIBEL SEMUA DEVICE) -->
+                    <!-- In-Game Rules Grid -->
                     <div x-show="activeRuleTab === 'ingame'" 
                          x-transition:enter="transition ease-out duration-400 transform"
                          x-transition:enter-start="opacity-0 translate-y-4"
@@ -485,21 +549,18 @@
                          class="grid grid-cols-1 md:grid-cols-2 gap-5 sm:gap-6 items-start">
                         
                         <template x-for="(rule, index) in [
-                            {id: 'ig-1', icon: '🚦', title: 'Realistic Driving', desc: 'Patuhi rambu, lampu lalu lintas, marka jalan, dan berkendara dengan wajar.', detail: 'Wajib berhenti di garis lampu merah, menyalakan lampu sen saat berbelok atau berpindah jalur, serta dilarang memotong jalan pengendara lain secara ugal-ugalan demi menjaga realisme lalu lintas server.'},
-                            {id: 'ig-2', icon: '💥', title: 'No CR (Car Ramming)', desc: 'Dilarang menabrak kendaraan lain tanpa alasan RP yang jelas.', detail: 'Tindakan sengaja menabrak mobil orang lain untuk menjatuhkan, merusak bodi, atau melampiaskan emosi tanpa adanya dialog atau latar cerita kriminal/kecelakaan roleplay yang sah akan berujung sanksi tegas.'},
-                            {id: 'ig-3', icon: '🛡️', title: 'No FRP', desc: 'Dilarang melakukan tindakan yang tidak masuk akal dalam roleplay.', detail: 'Force RolePlay / Failing to Value Life (FRP) meliputi aksi melompat dari gedung tinggi tanpa cedera realistis, mengendarai mobil dengan 4 ban pecah kecepatan tinggi, atau mengabaikan todongan senjata saat terpojok.'},
-                            {id: 'ig-4', icon: '🤝', title: 'Respect All Players', desc: 'Dilarang toxic, menghina, spam, atau mengganggu pemain lain.', detail: 'Setiap peserta sesi wajib menjunjung tinggi sportivitas. Dilarang melontarkan kata-kata kotor, merendahkan fisik, atau mengejek pemain lain baik di chat in-game maupun voice chat.'},
-                            {id: 'ig-5', icon: '⚔️', title: 'No RDM (Random Deathmatch)', desc: 'Dilarang menyerang atau membunuh pemain tanpa alasan RP.', detail: 'Anda tidak diperkenankan memukul, menembak, atau melukai player lain secara acak tanpa adanya latar belakang konflik, ancaman, atau investigasi faksi yang jelas.'},
-                            {id: 'ig-6', icon: '👮‍♂️', title: 'Follow Staff', desc: 'Keputusan Host, Co-Host, dan Moderator wajib dihormati.', detail: 'Apabila staff memberikan instruksi, pengalihan rute, atau teguran di dalam sesi, seluruh peserta wajib mematuhi instruksi tersebut demi kelancaran acara.'},
-                            {id: 'ig-7', icon: '⚡', title: 'No Exploiting', desc: 'Dilarang menggunakan bug, glitch, atau exploit untuk keuntungan sendiri.', detail: 'Segala bentuk eksploitasi celah game (seperti menembus tembok, menduplikasi item/uang, atau mempercepat kendaraan di luar batas normal sistem) akan mendatangkan banned permanen.'},
-                            {id: 'ig-8', icon: '🅿️', title: 'Proper Parking', desc: 'Parkir di tempat yang sesuai dan jangan menghalangi jalan.', detail: 'Saat berhenti atau meninggalkan kendaraan, posisikan kendaraan di area parkir resmi, pinggir jalan yang aman, dan pastikan tidak menutup akses jalan utama atau lampu merah.'},
-                            {id: 'ig-9', icon: '🔗', title: 'Use AORP Properly', desc: 'AORP hanya digunakan untuk keperluan RP, bukan untuk menghindari aturan.', detail: 'Area of Roleplay (AORP) wajib dihormati batasannya. Jangan menyalahgunakan status AORP untuk lari dari tanggung jawab hukum atau menghindari interaksi roleplay dengan player lain.'},
-                            {id: 'ig-10', icon: '🌟', title: 'Keep RP Alive', desc: 'Utamakan kenyamanan, keseruan, dan kualitas roleplay bersama.', detail: 'Dukung alur cerita yang sedang berjalan, bangun interaksi yang kreatif dengan warga lain, dan jadikan sesi MoestordRP sebagai tempat bersenang-senang yang imersif bagi semua orang.'}
+                            {id: 'ig-1', icon: '🚦', title: 'Realistic Driving', desc: 'Patuhi rambu, lampu lalu lintas, marka jalan, dan berkendara dengan wajar.', detail: 'Wajib berhenti di garis lampu merah, menyalakan lampu sen saat berbelok atau berpindah jalur, serta dilarang memotong jalan pengendara lain secara ugal-ugalan demi menjaga realisme lalu lintas server CDID.'},
+                            {id: 'ig-2', icon: '💥', title: 'No CR (Car Ramming)', desc: 'Dilarang menabrak kendaraan lain tanpa alasan RP yang jelas.', detail: 'Tindakan sengaja menabrak mobil player lain (seperti pakai Tokoma Avanza atau Lahkokgini Tempestra) untuk merusak bodi tanpa dialog RP yang sah akan dikenakan sanksi tegas.'},
+                            {id: 'ig-3', icon: '🛡️', title: 'No FRP', desc: 'Dilarang melakukan tindakan yang tidak masuk akal dalam roleplay.', detail: 'Force RolePlay / Failing to Value Life (FRP) meliputi aksi melompat dari jembatan tinggi, membawa mobil dengan 4 ban pecah kecepatan tinggi, atau mengabaikan todongan senjata.'},
+                            {id: 'ig-4', icon: '🤝', title: 'Respect All Players', desc: 'Dilarang toxic, menghina, spam, atau mengganggu pemain lain.', detail: 'Setiap peserta sesi wajib menjunjung tinggi sportivitas. Dilarang melontarkan kata-kata kotor atau merendahkan fisik pemain lain di chat in-game maupun voice chat.'},
+                            {id: 'ig-5', icon: '⚔️', title: 'No RDM (Random Deathmatch)', desc: 'Dilarang menyerang atau membunuh pemain tanpa alasan RP.', detail: 'Anda tidak diperkenankan memukul atau menembak player lain secara acak tanpa adanya latar belakang konflik, ancaman, atau investigasi faksi yang jelas.'},
+                            {id: 'ig-6', icon: '👮‍♂️', title: 'Follow Staff', desc: 'Keputusan Host, Co-Host, dan Moderator wajib dihormati.', detail: 'Apabila staff memberikan instruksi, pengalihan rute konvoi, atau teguran di dalam sesi, seluruh peserta wajib mematuhi instruksi tersebut demi kelancaran acara.'},
+                            {id: 'ig-7', icon: '⚡', title: 'No Exploiting', desc: 'Dilarang menggunakan bug, glitch, atau exploit untuk keuntungan sendiri.', detail: 'Segala bentuk eksploitasi celah game CDID (seperti menembus tembok, menduplikasi uang/item, atau mempercepat mobil di luar batas normal) berujung banned permanen.'},
+                            {id: 'ig-8', icon: '🅿️', title: 'Proper Parking', desc: 'Parkir di tempat yang sesuai dan jangan menghalangi jalan.', detail: 'Saat berhenti atau meninggalkan kendaraan, posisikan kendaraan di area parkir resmi atau pinggir jalan yang aman, jangan menutup akses jalan utama.'},
+                            {id: 'ig-9', icon: '🔗', title: 'Use AORP Properly', desc: 'AORP hanya digunakan untuk keperluan RP, bukan untuk menghindari aturan.', detail: 'Area of Roleplay (AORP) wajib dihormati batasannya. Jangan menyalahgunakan status AORP untuk lari dari tanggung jawab hukum in-game.'},
+                            {id: 'ig-10', icon: '🌟', title: 'Keep RP Alive', desc: 'Utamakan kenyamanan, keseruan, dan kualitas roleplay bersama.', detail: 'Dukung alur cerita yang sedang berjalan, bangun interaksi yang kreatif dengan warga lain, dan jadikan sesi MoestordRP sebagai tempat bersenang-senang yang imersif.'}
                         ]" :key="rule.id">
-                            <!-- CARD UTAMA: Flexbox struktur rapi agar tombol Detail selalu di bawah/sejajar natural -->
                             <div @click="toggleRule(rule.id)" class="supreme-glass p-5 sm:p-7 rounded-3xl shadow-xl flex flex-col justify-between space-y-4 border border-sky-500/25 spotlight-card cursor-pointer group h-full">
-                                
-                                <!-- Bagian Atas: Icon, Judul, dan Tombol Detail Terjaga Rapi -->
                                 <div class="flex items-start justify-between gap-3">
                                     <div class="flex items-center gap-3.5 min-w-0">
                                         <div class="w-11 h-11 sm:w-12 sm:h-12 bg-sky-500/15 rounded-2xl flex items-center justify-center text-lg sm:text-xl shadow-inner border border-sky-500/30 group-hover:scale-110 transition shrink-0" x-text="rule.icon"></div>
@@ -507,11 +568,7 @@
                                     </div>
                                     <span class="text-[11px] sm:text-xs font-mono text-sky-400 font-bold bg-sky-500/10 px-2.5 sm:px-3 py-1.5 rounded-full border border-sky-500/30 shadow-sm shrink-0" x-text="openRule === rule.id ? 'Tutup ▲' : 'Detail ▼'"></span>
                                 </div>
-
-                                <!-- Deskripsi Singkat -->
                                 <p class="text-slate-600 dark:text-slate-400 text-xs sm:text-sm leading-relaxed font-medium" x-text="rule.desc"></p>
-                                
-                                <!-- Accordion Penjelasan Detail (Smooth Pure CSS Grid) -->
                                 <div class="accordion-content" :class="openRule === rule.id ? 'is-open' : ''">
                                     <div class="accordion-inner">
                                         <div class="pt-4 mt-2 border-t border-slate-200 dark:border-slate-800 text-xs sm:text-sm text-slate-600 dark:text-slate-300 space-y-1.5 bg-sky-500/10 p-3.5 sm:p-4 rounded-2xl border border-sky-500/30 shadow-inner">
@@ -534,23 +591,22 @@
                         <div class="border-b border-slate-200/80 dark:border-slate-800 pb-5 sm:pb-6 relative z-10">
                             <h3 class="font-outfit text-xl sm:text-3xl font-black flex items-center gap-3.5 text-slate-900 dark:text-white">
                                 <span class="p-2.5 sm:p-3 bg-rose-500/15 rounded-2xl text-rose-400 text-lg sm:text-xl shadow-inner border border-rose-500/40 shrink-0">🚫</span>
-                                <span class="leading-snug">Banned Cars (Kendaraan yang Dilarang)</span>
+                                <span class="leading-snug">Banned Cars (Kendaraan Khusus CDID yang Dilarang)</span>
                             </h3>
-                            <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-2 font-medium">Klik pada setiap kategori untuk melihat detail penjelasan larangan kendaraan:</p>
+                            <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-2 font-medium">Klik pada setiap kategori untuk melihat contoh mobil CDID yang dilarang beserta penjelasannya:</p>
                         </div>
 
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-5 relative z-10 text-xs sm:text-sm font-medium items-start">
                             
                             <template x-for="(bc, index) in [
-                                {id: 'bc-1', title: 'Hypercar', desc: 'Mobil berperforma kecepatan ekstrem (seperti Bugatti, Koenigsegg, dll) tidak sesuai dengan skenario lalu lintas perkotaan santai di server.'},
-                                {id: 'bc-2', title: 'Supercar', desc: 'Kendaraan jenis supercar dilarang digunakan untuk mencegah aksi kebut-kebutan liar yang merusak jalannya roleplay warga sipil.'},
-                                {id: 'bc-3', title: 'Kendaraan Event / Limited', desc: 'Mobil edisi khusus event atau limited seringkali memiliki visual mencolok yang melanggar batasan estetika realistis session.'},
-                                {id: 'bc-4', title: 'Kendaraan Harga > $2.5M', desc: 'Batasan harga maksimal kendaraan di dalam sesi adalah $2.5M untuk menjaga kesetaraan ekonomi antar pemain roleplay.'},
-                                {id: 'bc-5', title: 'Strobo / Siren Tidak Sesuai', desc: 'Penggunaan lampu strobo atau sirine hanya diizinkan untuk faksi resmi (Polisi/Medis). Warga sipil dilarang keras memasangnya.'},
-                                {id: 'bc-6', title: 'Tidak Sesuai Tema Session', desc: 'Jika tema session adalah kendaraan niaga atau harian standar, membawa mobil sport atau modifikasi ekstrem melanggar ketentuan host.'},
-                                {id: 'bc-7', title: 'Digunakan untuk Trolling / FRP', desc: 'Kendaraan apapun yang dipakai untuk sengaja menabrak kerumunan, membalikkan mobil lain, atau membuat kekacauan non-RP akan langsung disita dan diremove dari sesi.', full: true}
+                                {id: 'bc-1', title: 'Hypercar & Supercar CDID', desc: 'Contoh yang dilarang: Lahkokgini Tempestra, Lahkokgini Celestaurus, Atruse R8, McSena 720S, Flores Mustang. Mobil kecepatan ekstrem merusak ritme roleplay kota santai.'},
+                                {id: 'bc-2', title: 'Kendaraan Harga > $2.5M', desc: 'Mobil dengan valuasi harga in-game di atas $2.5M (seperti Henry-Rolls Phantom atau Mullbach 57/62) dilarang digunakan untuk menjaga kesetaraan ekonomi.'},
+                                {id: 'bc-3', title: 'Kendaraan Event / Limited Khusus', desc: 'Mobil edisi terbatas event tertentu (seperti edisi spesial Hari Raya atau Weekly Drop langka) tidak diizinkan dipakai di sesi reguler.'},
+                                {id: 'bc-4', title: 'Strobo & Siren Wajib Job Resmi', desc: 'Penggunaan lampu strobo atau sirine HANYA diizinkan untuk faksi resmi in-game, seperti Suzi D-Max Police, Tokoma Land Cruiser Ambulance, atau Hyunson Palisade Medis. Warga sipil dilarang keras memasang strobo/sirine.'},
+                                {id: 'bc-5', title: 'Kendaraan Tidak Sesuai Tema Session', desc: 'Jika tema host adalah kendaraan harian standar / niaga (seperti Mestibis Canter, Tokoma Kijang, Densu GranMax), membawa mobil sport/modifikasi ekstrem melanggar aturan.'},
+                                {id: 'bc-6', title: 'Digunakan untuk Trolling / Car Ramming', desc: 'Kendaraan jenis apapun yang dipakai sengaja untuk menabrak kerumunan atau membuat kekacauan non-RP akan langsung disita dan diremove dari sesi.'}
                             ]" :key="bc.id">
-                                <div @click="toggleRule(bc.id)" :class="bc.full ? 'sm:col-span-2' : ''" class="p-4 sm:p-5 rounded-2xl sm:rounded-3xl bg-rose-500/5 border border-rose-500/30 flex flex-col gap-3 shadow-sm cursor-pointer group hover:bg-rose-500/10 transition">
+                                <div @click="toggleRule(bc.id)" class="p-4 sm:p-5 rounded-2xl sm:rounded-3xl bg-rose-500/5 border border-rose-500/30 flex flex-col gap-3 shadow-sm cursor-pointer group hover:bg-rose-500/10 transition h-full">
                                     <div class="flex items-center justify-between gap-3">
                                         <div class="flex items-center gap-3 min-w-0">
                                             <span class="text-rose-500 text-base font-bold shrink-0">✖</span>
@@ -571,44 +627,55 @@
                         </div>
                     </div>
 
-                    <!-- Discord Rules Grid -->
+                    <!-- Discord Rules Grid & Join Discord Button at the bottom -->
                     <div x-show="activeRuleTab === 'discord'" 
                          x-transition:enter="transition ease-out duration-400 transform"
                          x-transition:enter-start="opacity-0 translate-y-4"
                          x-transition:enter-end="opacity-100 translate-y-0"
-                         class="grid grid-cols-1 md:grid-cols-2 gap-5 sm:gap-6 items-start">
+                         class="space-y-8">
                         
-                        <template x-for="(dc, index) in [
-                            {id: 'dc-1', icon: '🤝', title: 'Sopan Santun Publik', desc: 'Jaga ketikan di channel publik. Dilarang keras melakukan SARA, menghina fisik, atau melontarkan toxic behavior.', detail: 'Lingkungan Discord harus tetap ramah dan inklusif. Segala bentuk ucapan rasis, diskriminatif, atau serangan personal antar member berakibat mute hingga ban.'},
-                            {id: 'dc-2', icon: '📁', title: 'Gunakan Channel Tepat', desc: 'Bahas hal umum di general, jual-beli di trade, serta laporkan bug atau pelanggaran melalui tiket resmi.', detail: 'Patuhi peruntukan tiap channel teks. Jangan mengirim meme di channel laporan atau mengirim chat obrolan di channel pengumuman resmi.'},
-                            {id: 'dc-3', icon: '⚡', title: 'Hindari Spam & Provokasi', desc: 'Dilarang spam chat, capslock berlebihan, atau memicu perdebatan yang merusak keharmonisan.', detail: 'Mengirim pesan berulang kali (flood), menggunakan huruf kapital seluruhnya untuk memicu keributan, atau sengaja memancing emosi member lain dilarang keras.'},
-                            {id: 'dc-4', icon: '👮‍♂️', title: 'Hormati Staff', desc: 'Patuhi arahan moderator atau admin. Ajukan banding (appeal) secara sopan melalui privat ticket.', detail: 'Jika Anda mendapat sanksi atau peringatan, diskusikan secara baik-baik melalui tiket privat dengan staff. Jangan mendebat keputusan staff di channel publik.'},
-                            {id: 'dc-5', icon: '🚫', title: 'No NSFW & Gore', desc: 'Dilarang keras membagikan konten dewasa, berbau pornografi, kekerasan ekstrem, atau hal senonoh lainnya.', detail: 'Server ini ramah untuk semua kalangan usia member. Pengiriman gambar, stiker, atau link berbau NSFW/Gore mendatangkan hukuman pembersihan langsung (perma-ban).'},
-                            {id: 'dc-6', icon: '🔗', title: 'No Unauthorized Links', desc: 'Dilarang mengirim tautan phising, iklan server lain, atau link mencurigakan tanpa izin manajemen.', detail: 'Promosi server Discord lain atau penyebaran link eksternal berbahaya tanpa persetujuan owner/admin dikategorikan sebagai pelanggaran berat.'},
-                            {id: 'dc-7', icon: '🏷️', title: 'Proper Display Name', desc: 'Gunakan nama profil dan foto avatar yang wajar, mudah dibaca, serta tidak mengandung unsur penghinaan.', detail: 'Hindari penggunaan nama kosong, karakter tak terlihat, atau nickname yang menyerupai nama staff untuk menghindari penipuan identitas di komunitas.'},
-                            {id: 'dc-8', icon: '🎙️', title: 'Voice Channel Etiquette', desc: 'Jangan menggunakan soundboard berlebihan, teriak-teriak, atau memutar musik di voice channel publik.', detail: 'Hargai kenyamanan member lain di voice room. Jika mikrofon Anda berdengung atau bising, gunakan fitur push-to-talk atau mute mandiri.'},
-                            {id: 'dc-9', icon: '⚠️', title: 'No Ping Abuse', desc: 'Dilarang melakukan mention (@) berulang kali kepada Administrator atau Moderator tanpa keperluan penting.', detail: 'Mention staff hanya boleh dilakukan saat membuat tiket atau melaporkan darurat mutlak. Tagging staff sembarangan di general chat akan dikenakan sanksi mute.'},
-                            {id: 'dc-10', icon: '💡', title: 'Constructive Feedback', desc: 'Sampaikan kritik dan saran untuk kemajuan server melalui channel atau tiket khusus dengan bahasa sopan.', detail: 'Kami sangat terbuka terhadap masukan membangun dari komunitas. Salurkan ide perbaikan server melalui jalur formal yang telah disediakan pengurus.'}
-                        ]" :key="dc.id">
-                            <div @click="toggleRule(dc.id)" class="supreme-glass p-5 sm:p-7 rounded-3xl shadow-xl flex flex-col justify-between space-y-4 border border-sky-500/25 spotlight-card cursor-pointer group h-full">
-                                <div class="flex items-start justify-between gap-3">
-                                    <div class="flex items-center gap-3.5 min-w-0">
-                                        <div class="w-11 h-11 sm:w-12 sm:h-12 bg-sky-500/15 rounded-2xl flex items-center justify-center text-lg sm:text-xl shadow-inner border border-sky-500/30 group-hover:scale-110 transition shrink-0" x-text="dc.icon"></div>
-                                        <h4 class="font-outfit text-sm sm:text-lg font-extrabold text-slate-900 dark:text-white leading-snug" x-text="dc.title"></h4>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-5 sm:gap-6 items-start">
+                            <template x-for="(dc, index) in [
+                                {id: 'dc-1', icon: '🤝', title: 'Sopan Santun Publik', desc: 'Jaga ketikan di channel publik. Dilarang keras melakukan SARA, menghina fisik, atau melontarkan toxic behavior.', detail: 'Lingkungan Discord harus tetap ramah dan inklusif. Segala bentuk ucapan rasis, diskriminatif, atau serangan personal antar member berakibat mute hingga ban.'},
+                                {id: 'dc-2', icon: '📁', title: 'Gunakan Channel Tepat', desc: 'Bahas hal umum di general, jual-beli di trade, serta laporkan bug atau pelanggaran melalui tiket resmi.', detail: 'Patuhi peruntukan tiap channel teks. Jangan mengirim meme di channel laporan atau mengirim chat obrolan di channel pengumuman resmi.'},
+                                {id: 'dc-3', icon: '⚡', title: 'Hindari Spam & Provokasi', desc: 'Dilarang spam chat, capslock berlebihan, atau memicu perdebatan yang merusak keharmonisan.', detail: 'Mengirim pesan berulang kali (flood), menggunakan huruf kapital seluruhnya untuk memicu keributan, atau sengaja memancing emosi member lain dilarang keras.'},
+                                {id: 'dc-4', icon: '👮‍♂️', title: 'Hormati Staff', desc: 'Patuhi arahan moderator atau admin. Ajukan banding (appeal) secara sopan melalui privat ticket.', detail: 'Jika Anda mendapat sanksi atau peringatan, diskusikan secara baik-baik melalui tiket privat dengan staff. Jangan mendebat keputusan staff di channel publik.'},
+                                {id: 'dc-5', icon: '🚫', title: 'No NSFW & Gore', desc: 'Dilarang keras membagikan konten dewasa, berbau pornografi, kekerasan ekstrem, atau hal senonoh lainnya.', detail: 'Server ini ramah untuk semua kalangan usia member. Pengiriman gambar, stiker, atau link berbau NSFW/Gore mendatangkan hukuman pembersihan langsung (perma-ban).'},
+                                {id: 'dc-6', icon: '🔗', title: 'No Unauthorized Links', desc: 'Dilarang mengirim tautan phising, iklan server lain, atau link mencurigakan tanpa izin manajemen.', detail: 'Promosi server Discord lain atau penyebaran link eksternal berbahaya tanpa persetujuan owner/admin dikategorikan sebagai pelanggaran berat.'},
+                                {id: 'dc-7', icon: '🏷️', title: 'Proper Display Name', desc: 'Gunakan nama profil dan foto avatar yang wajar, mudah dibaca, serta tidak mengandung unsur penghinaan.', detail: 'Hindari penggunaan nama kosong, karakter tak terlihat, atau nickname yang menyerupai nama staff untuk menghindari penipuan identitas di komunitas.'},
+                                {id: 'dc-8', icon: '🎙️', title: 'Voice Channel Etiquette', desc: 'Jangan menggunakan soundboard berlebihan, teriak-teriak, atau memutar musik di voice channel publik.', detail: 'Hargai kenyamanan member lain di voice room. Jika mikrofon Anda berdengung atau bising, gunakan fitur push-to-talk atau mute mandiri.'},
+                                {id: 'dc-9', icon: '⚠️', title: 'No Ping Abuse', desc: 'Dilarang melakukan mention (@) berulang kali kepada Administrator atau Moderator tanpa keperluan penting.', detail: 'Mention staff hanya boleh dilakukan saat membuat tiket atau melaporkan darurat mutlak. Tagging staff sembarangan di general chat akan dikenakan sanksi mute.'},
+                                {id: 'dc-10', icon: '💡', title: 'Constructive Feedback', desc: 'Sampaikan kritik dan saran untuk kemajuan server melalui channel atau tiket khusus dengan bahasa sopan.', detail: 'Kami sangat terbuka terhadap masukan membangun dari komunitas. Salurkan ide perbaikan server melalui jalur formal yang telah disediakan pengurus.'}
+                            ]" :key="dc.id">
+                                <div @click="toggleRule(dc.id)" class="supreme-glass p-5 sm:p-7 rounded-3xl shadow-xl flex flex-col justify-between space-y-4 border border-sky-500/25 spotlight-card cursor-pointer group h-full">
+                                    <div class="flex items-start justify-between gap-3">
+                                        <div class="flex items-center gap-3.5 min-w-0">
+                                            <div class="w-11 h-11 sm:w-12 sm:h-12 bg-sky-500/15 rounded-2xl flex items-center justify-center text-lg sm:text-xl shadow-inner border border-sky-500/30 group-hover:scale-110 transition shrink-0" x-text="dc.icon"></div>
+                                            <h4 class="font-outfit text-sm sm:text-lg font-extrabold text-slate-900 dark:text-white leading-snug" x-text="dc.title"></h4>
+                                        </div>
+                                        <span class="text-[11px] sm:text-xs font-mono text-sky-400 font-bold bg-sky-500/10 px-2.5 sm:px-3 py-1.5 rounded-full border border-sky-500/30 shadow-sm shrink-0" x-text="openRule === dc.id ? 'Tutup ▲' : 'Detail ▼'"></span>
                                     </div>
-                                    <span class="text-[11px] sm:text-xs font-mono text-sky-400 font-bold bg-sky-500/10 px-2.5 sm:px-3 py-1.5 rounded-full border border-sky-500/30 shadow-sm shrink-0" x-text="openRule === dc.id ? 'Tutup ▲' : 'Detail ▼'"></span>
-                                </div>
-                                <p class="text-slate-600 dark:text-slate-400 text-xs sm:text-sm leading-relaxed font-medium" x-text="dc.desc"></p>
-                                <div class="accordion-content" :class="openRule === dc.id ? 'is-open' : ''">
-                                    <div class="accordion-inner">
-                                        <div class="pt-4 mt-2 border-t border-slate-200 dark:border-slate-800 text-xs sm:text-sm text-slate-600 dark:text-slate-300 space-y-1.5 bg-sky-500/10 p-3.5 sm:p-4 rounded-2xl border border-sky-500/30 shadow-inner">
-                                            <p><strong>Penjelasan Detail:</strong> <span x-text="dc.detail"></span></p>
+                                    <p class="text-slate-600 dark:text-slate-400 text-xs sm:text-sm leading-relaxed font-medium" x-text="dc.desc"></p>
+                                    <div class="accordion-content" :class="openRule === dc.id ? 'is-open' : ''">
+                                        <div class="accordion-inner">
+                                            <div class="pt-4 mt-2 border-t border-slate-200 dark:border-slate-800 text-xs sm:text-sm text-slate-600 dark:text-slate-300 space-y-1.5 bg-sky-500/10 p-3.5 sm:p-4 rounded-2xl border border-sky-500/30 shadow-inner">
+                                                <p><strong>Penjelasan Detail:</strong> <span x-text="dc.detail"></span></p>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
-                        </template>
+                            </template>
+                        </div>
 
+                        <!-- TOMBOL JOIN DISCORD PALING BAWAH DI TAB DISCORD -->
+                        <div class="pt-4 flex justify-center">
+                            <button @click="openDiscordGateway()" 
+                                class="w-full sm:w-auto px-10 py-5 rounded-3xl bg-gradient-to-r from-indigo-600 via-sky-600 to-blue-600 hover:opacity-95 text-white font-outfit font-black text-sm sm:text-base flex items-center justify-center gap-3 shadow-2xl shadow-indigo-500/40 transition hover:scale-105 border border-indigo-400/50 group">
+                                <span class="text-2xl group-hover:rotate-12 transition">💬</span>
+                                <span>Join Discord MoestordRP</span>
+                                <span class="text-xl">→</span>
+                            </button>
+                        </div>
                     </div>
                 </div>
 
