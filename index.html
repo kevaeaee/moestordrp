@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MoestordRP &bull; Official Handbook</title>
+    <title>MoestordRP Hub &bull; Official Platform</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -17,6 +17,7 @@
                         'aurora-2': 'auroraMove2 18s ease-in-out infinite alternate',
                         'pulse-glow': 'pulseGlow 4s ease-in-out infinite alternate',
                         'float': 'floatAnim 6s ease-in-out infinite',
+                        'scale-in': 'scaleInAnim 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards',
                     },
                     keyframes: {
                         marqueeTicker: {
@@ -38,6 +39,10 @@
                         floatAnim: {
                             '0%, 100%': { transform: 'translateY(0px)' },
                             '50%': { transform: 'translateY(-10px)' }
+                        },
+                        scaleInAnim: {
+                            '0%': { opacity: 0, transform: 'scale(0.8)' },
+                            '100%': { opacity: 1, transform: 'scale(1)' }
                         }
                     }
                 }
@@ -61,7 +66,7 @@
             box-shadow: 0 35px 80px -20px rgba(0, 0, 0, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.9);
         }
         .dark .supreme-glass {
-            background: rgba(8, 13, 24, 0.75);
+            background: rgba(8, 13, 24, 0.78);
             backdrop-filter: blur(60px);
             -webkit-backdrop-filter: blur(60px);
             border: 1px solid rgba(56, 189, 248, 0.25);
@@ -126,7 +131,7 @@
         audioCtx: null,
         openRule: null,
 
-        // Discord Gateway Modal States
+        // Discord Perfect Synchronized Countdown States
         showDiscordModal: false,
         discordCountdown: 3,
         discordTimer: null,
@@ -195,12 +200,12 @@
             if (this.discordTimer) clearInterval(this.discordTimer);
 
             this.discordTimer = setInterval(() => {
-                if (this.discordCountdown > 1) {
+                if (this.discordCountdown > 0) {
                     this.discordCountdown--;
                     this.playSfx('click');
-                } else {
-                    this.discordCountdown = 0;
-                    clearInterval(this.discordTimer);
+                    if (this.discordCountdown === 0) {
+                        clearInterval(this.discordTimer);
+                    }
                 }
             }, 1000);
         },
@@ -278,7 +283,7 @@
                 <div class="inline-flex p-4 bg-gradient-to-tr from-sky-400 via-indigo-500 to-blue-600 rounded-3xl text-white text-4xl shadow-2xl animate-float font-outfit font-black">
                     M
                 </div>
-                <h2 class="font-outfit text-3xl font-extrabold tracking-tight">MoestordRP Gateway</h2>
+                <h2 class="font-outfit text-3xl font-extrabold tracking-tight">MoestordRP Hub</h2>
                 <p class="text-xs text-slate-500 dark:text-slate-400 font-medium">
                     An CDID Roleplay Group &bull; Pilih pengalaman visual terbaik Anda:
                 </p>
@@ -303,53 +308,78 @@
         </div>
     </div>
 
-    <!-- DISCORD 3-SECOND WARNING GATEWAY MODAL -->
+    <!-- ZERO-SYNCED STABLE COUNTDOWN DISCORD GATEWAY MODAL -->
     <div x-show="showDiscordModal" 
          x-transition:enter="transition ease-out duration-300"
-         x-transition:enter-start="opacity-0 scale-90"
+         x-transition:enter-start="opacity-0 scale-95"
          x-transition:enter-end="opacity-100 scale-100"
          x-transition:leave="transition ease-in duration-200"
          x-transition:leave-start="opacity-100 scale-100"
-         x-transition:leave-end="opacity-0 scale-90"
-         class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-indigo-950/90 backdrop-blur-2xl"
+         x-transition:leave-end="opacity-0 scale-95"
+         class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-2xl"
          style="display: none;">
         
-        <div class="supreme-glass p-8 sm:p-10 rounded-[2.5rem] shadow-2xl max-w-sm w-full text-center space-y-6 relative overflow-hidden border border-indigo-500/50">
-            <div class="absolute -top-20 -left-20 w-48 h-48 bg-indigo-500/30 rounded-full blur-3xl pointer-events-none animate-pulse-glow"></div>
+        <div class="supreme-glass p-8 sm:p-10 rounded-[3rem] shadow-2xl max-w-sm w-full text-center space-y-6 relative overflow-hidden border border-sky-500/50">
+            <!-- Glowing ambient effects -->
+            <div class="absolute -top-24 -left-24 w-56 h-56 bg-sky-500/30 rounded-full blur-3xl pointer-events-none animate-pulse-glow"></div>
+            <div class="absolute -bottom-24 -right-24 w-56 h-56 bg-indigo-500/30 rounded-full blur-3xl pointer-events-none animate-pulse-glow"></div>
             
-            <div class="relative z-10 space-y-4">
-                <!-- Icon Discord & Countdown Ring -->
-                <div class="w-16 h-16 mx-auto bg-gradient-to-tr from-indigo-500 to-sky-500 rounded-2xl flex items-center justify-center text-white text-3xl shadow-xl shadow-indigo-500/30 font-bold relative">
-                    <span x-text="discordCountdown > 0 ? discordCountdown : '🚀'"></span>
+            <div class="relative z-10 space-y-5">
+                <!-- Precision Circular Progress Ring (Zero-Synced, Smooth Linear) -->
+                <div class="relative w-32 h-32 mx-auto flex items-center justify-center">
+                    <svg class="w-full h-full transform -rotate-90" viewBox="0 0 120 120">
+                        <!-- Track Background Ring -->
+                        <circle cx="60" cy="60" r="50" stroke="currentColor" stroke-width="6" class="text-slate-800/80" fill="transparent"></circle>
+                        <!-- Perfect Zero-Out Linear Progress Ring (Circumference = 314.16) -->
+                        <circle cx="60" cy="60" r="50" stroke="url(#stableGradient)" stroke-width="6" 
+                                :style="`stroke-dasharray: 314.16; stroke-dashoffset: ${314.16 * (discordCountdown / 3)};`"
+                                stroke-linecap="round" fill="transparent" class="transition-all duration-1000 ease-linear"></circle>
+                        <defs>
+                            <linearGradient id="stableGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" stop-color="#38bdf8" />
+                                <stop offset="100%" stop-color="#6366f1" />
+                            </linearGradient>
+                        </defs>
+                    </svg>
+
+                    <!-- Center Stable Counter / Ready Display (No Bounce) -->
+                    <div class="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
+                        <template x-if="discordCountdown > 0">
+                            <div class="flex flex-col items-center animate-scale-in">
+                                <span class="font-outfit text-4xl font-black text-slate-900 dark:text-white tracking-tighter" x-text="discordCountdown"></span>
+                                <span class="text-[9px] font-mono text-sky-400 font-extrabold uppercase tracking-widest">Detik</span>
+                            </div>
+                        </template>
+                        <template x-if="discordCountdown === 0">
+                            <div class="flex flex-col items-center animate-scale-in">
+                                <span class="text-3xl">🚀</span>
+                                <span class="text-[10px] font-outfit text-emerald-400 font-black tracking-widest mt-0.5">SIAP</span>
+                            </div>
+                        </template>
+                    </div>
                 </div>
 
-                <div class="space-y-1.5">
-                    <h3 class="font-outfit text-xl font-black text-slate-900 dark:text-white">Do you wish to continue?</h3>
-                    <p class="text-xs text-slate-500 dark:text-slate-400 font-medium">
-                        Anda akan diarahkan menuju server resmi <strong class="text-indigo-400">MoestordRP Discord</strong>. Harap tunggu sebentar...
+                <div class="space-y-2">
+                    <h3 class="font-outfit text-xl font-black text-slate-900 dark:text-white tracking-tight">Do you wish to continue?</h3>
+                    <p class="text-xs text-slate-600 dark:text-slate-300 font-medium leading-relaxed">
+                        Anda akan diarahkan menuju server resmi <strong class="text-sky-400 font-bold">MoestordRP Hub Discord</strong>.
                     </p>
-                </div>
-
-                <!-- Timer Indicator Text -->
-                <div class="py-2 px-4 rounded-xl bg-indigo-500/10 border border-indigo-500/30 text-indigo-400 font-mono text-xs font-bold">
-                    <span x-show="discordCountdown > 0">⏳ Mohon tunggu <span x-text="discordCountdown"></span> detik...</span>
-                    <span x-show="discordCountdown === 0" class="text-emerald-400">✨ Tautan Siap Diakses!</span>
                 </div>
             </div>
 
-            <!-- Action Buttons -->
+            <!-- Ultimate High-End Action Buttons -->
             <div class="grid grid-cols-2 gap-3 relative z-10 pt-2">
                 <button @click="closeDiscordGateway()" 
-                    class="py-3 rounded-xl bg-slate-200 dark:bg-slate-800 hover:bg-slate-300 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 font-outfit font-bold text-xs transition shadow-sm">
+                    class="py-3.5 px-4 rounded-2xl bg-slate-200/80 dark:bg-slate-900/80 hover:bg-slate-300 dark:hover:bg-slate-800 text-slate-800 dark:text-slate-200 font-outfit font-bold text-xs transition border border-slate-300 dark:border-slate-800 shadow-sm">
                     Batal
                 </button>
                 <a :href="discordCountdown === 0 ? 'https://discord.gg/QmN7Su3Adm' : '#'" 
                    :target="discordCountdown === 0 ? '_blank' : '_self'"
                    @click="if(discordCountdown === 0) { closeDiscordGateway(); }"
-                   :class="discordCountdown > 0 ? 'opacity-50 cursor-not-allowed bg-slate-600' : 'bg-gradient-to-r from-indigo-600 to-sky-500 hover:opacity-95 shadow-lg shadow-indigo-500/30 scale-105'"
-                   class="py-3 rounded-xl text-white font-outfit font-extrabold text-xs flex items-center justify-center gap-1.5 transition">
+                   :class="discordCountdown > 0 ? 'opacity-40 cursor-not-allowed bg-slate-800 text-slate-500' : 'bg-gradient-to-r from-sky-500 via-indigo-600 to-blue-600 hover:opacity-95 shadow-xl shadow-sky-500/40 scale-105 text-white animate-pulse'"
+                   class="py-3.5 px-4 rounded-2xl font-outfit font-extrabold text-xs flex items-center justify-center gap-2 transition duration-300 border border-sky-400/50">
                     <span>Masuk</span>
-                    <span>→</span>
+                    <span class="text-sm">→</span>
                 </a>
             </div>
         </div>
@@ -361,7 +391,7 @@
         <!-- RUNNING TEXT TICKER -->
         <div class="bg-gradient-to-r from-sky-600 via-indigo-600 to-blue-700 text-white text-xs font-bold py-3 overflow-hidden whitespace-nowrap shadow-2xl relative z-50 tracking-wider font-mono">
             <div class="inline-block animate-marquee uppercase">
-                🔥 OFFICIAL MOESTORDRP &bull; AN CDID ROLEPLAY GROUP &bull; IKUTI SEMUA RULES IN-GAME & DISCORD &bull; DRIVE SAFELY & RESPECT OTHERS &bull; REKOMENDASI DEVICE MEDIUM-HIGH END &bull; 🔥 OFFICIAL MOESTORDRP &bull; AN CDID ROLEPLAY GROUP &bull; IKUTI SEMUA RULES IN-GAME & DISCORD &bull; DRIVE SAFELY & RESPECT OTHERS &bull; REKOMENDASI DEVICE MEDIUM-HIGH END &bull;
+                🔥 OFFICIAL MOESTORDRP HUB &bull; AN CDID ROLEPLAY GROUP &bull; IKUTI SEMUA RULES IN-GAME & DISCORD &bull; DRIVE SAFELY & RESPECT OTHERS &bull; REKOMENDASI DEVICE MEDIUM-HIGH END &bull; 🔥 OFFICIAL MOESTORDRP HUB &bull; AN CDID ROLEPLAY GROUP &bull; IKUTI SEMUA RULES IN-GAME & DISCORD &bull; DRIVE SAFELY & RESPECT OTHERS &bull; REKOMENDASI DEVICE MEDIUM-HIGH END &bull;
             </div>
         </div>
 
@@ -384,7 +414,7 @@
                     </div>
                     <div class="min-w-0">
                         <h1 class="font-outfit font-extrabold text-base sm:text-2xl tracking-tight text-slate-900 dark:text-white flex items-center gap-2 truncate">
-                            <span class="truncate">MoestordRP</span>
+                            <span class="truncate">MoestordRP Hub</span>
                             <span class="text-[9px] sm:text-[10px] font-mono font-extrabold px-2 py-0.5 rounded-full bg-sky-500/20 text-sky-400 border border-sky-500/40 uppercase tracking-widest shrink-0 shadow-sm">OFFICIAL</span>
                         </h1>
                         <p class="text-[11px] sm:text-xs text-slate-500 font-medium truncate">An CDID Roleplay Group</p>
@@ -418,12 +448,12 @@
             <!-- HERO HEADER -->
             <div class="text-center mb-10 sm:mb-12 space-y-3 sm:space-y-4">
                 <span class="inline-flex items-center gap-2 px-4 sm:px-5 py-1.5 sm:py-2 rounded-full text-[11px] sm:text-xs font-mono font-extrabold bg-sky-500/10 text-sky-400 border border-sky-500/40 shadow-lg">
-                    ✨ OFFICIAL HANDBOOK & PERATURAN ✨
+                    ✨ OFFICIAL MOESTORDRP HUB ✨
                 </span>
                 <h2 class="font-outfit text-3xl sm:text-6xl font-black tracking-tight text-slate-900 dark:text-white leading-tight">
                     Pusat Informasi & Peraturan <br>
                     <span class="bg-gradient-to-r from-sky-400 via-indigo-400 to-blue-500 bg-clip-text text-transparent drop-shadow-md">
-                        MoestordRP
+                        MoestordRP Hub
                     </span>
                 </h2>
                 <p class="text-slate-600 dark:text-slate-400 max-w-xl mx-auto text-xs sm:text-base font-medium px-2">
@@ -477,7 +507,7 @@
                     <div class="border-b border-slate-200/80 dark:border-slate-800 pb-5 sm:pb-6 relative z-10">
                         <h3 class="font-outfit text-xl sm:text-4xl font-black flex items-center gap-3.5 text-slate-900 dark:text-white">
                             <span class="p-2.5 sm:p-3 bg-sky-500/15 rounded-2xl text-sky-400 text-lg sm:text-xl shadow-inner border border-sky-500/40 shrink-0">💡</span>
-                            <span class="leading-snug">Panduan Lengkap & Filosofi MoestordRP</span>
+                            <span class="leading-snug">Panduan Lengkap & Filosofi MoestordRP Hub</span>
                         </h3>
                         <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-2 font-medium">Dokumen panduan resmi operasional komunitas roleplay berbasis An CDID Roleplay Group.</p>
                     </div>
@@ -486,9 +516,9 @@
                         <div class="p-5 sm:p-6 rounded-2xl sm:rounded-3xl bg-sky-500/5 border border-sky-500/20 flex flex-col sm:flex-row items-start gap-4 sm:gap-5 shadow-sm">
                             <span class="text-3xl shrink-0">🏙️</span>
                             <div class="space-y-2">
-                                <h4 class="font-outfit font-extrabold text-sm sm:text-lg text-slate-900 dark:text-white">1. Definisi & Konsep Dasar Dunia MoestordRP</h4>
+                                <h4 class="font-outfit font-extrabold text-sm sm:text-lg text-slate-900 dark:text-white">1. Definisi & Konsep Dasar MoestordRP Hub</h4>
                                 <p>
-                                    <strong class="text-sky-400 font-bold">MoestordRP</strong> adalah pelopor server roleplay imersif di bawah naungan <strong class="text-slate-900 dark:text-white font-bold">An CDID Roleplay Group</strong> pada platform Roblox. Server ini dirancang secara khusus untuk menghadirkan tiruan kehidupan perkotaan CDID yang dinamis, interaktif, dan sangat realistis.
+                                    <strong class="text-sky-400 font-bold">MoestordRP Hub</strong> adalah pelopor server roleplay imersif di bawah naungan <strong class="text-slate-900 dark:text-white font-bold">An CDID Roleplay Group</strong> pada platform Roblox. Server ini dirancang secara khusus untuk menghadirkan tiruan kehidupan perkotaan CDID yang dinamis, interaktif, dan sangat realistis.
                                 </p>
                             </div>
                         </div>
@@ -498,7 +528,7 @@
                             <div class="space-y-2">
                                 <h4 class="font-outfit font-extrabold text-sm sm:text-lg text-slate-900 dark:text-white">2. Esensi Pendalaman Karakter (Roleplay Immersion)</h4>
                                 <p>
-                                    Inti dari pengalaman bermain di MoestordRP adalah komitmen penuh terhadap karakter fiktif Anda (<em class="text-indigo-400 font-semibold">In-Character / IC</em>). Ambil peran sebagai warga sipil, pengemudi angkutan, mekanik, hingga aparat penegak hukum dan medis.
+                                    Inti dari pengalaman bermain di MoestordRP Hub adalah komitmen penuh terhadap karakter fiktif Anda (<em class="text-indigo-400 font-semibold">In-Character / IC</em>). Ambil peran sebagai warga sipil, pengemudi angkutan, mekanik, hingga aparat penegak hukum dan medis.
                                 </p>
                             </div>
                         </div>
@@ -558,13 +588,13 @@
                             {id: 'ig-7', icon: '⚡', title: 'No Exploiting', desc: 'Dilarang menggunakan bug, glitch, atau exploit untuk keuntungan sendiri.', detail: 'Segala bentuk eksploitasi celah game CDID (seperti menembus tembok, menduplikasi uang/item, atau mempercepat mobil di luar batas normal) berujung banned permanen.'},
                             {id: 'ig-8', icon: '🅿️', title: 'Proper Parking', desc: 'Parkir di tempat yang sesuai dan jangan menghalangi jalan.', detail: 'Saat berhenti atau meninggalkan kendaraan, posisikan kendaraan di area parkir resmi atau pinggir jalan yang aman, jangan menutup akses jalan utama.'},
                             {id: 'ig-9', icon: '🔗', title: 'Use AORP Properly', desc: 'AORP hanya digunakan untuk keperluan RP, bukan untuk menghindari aturan.', detail: 'Area of Roleplay (AORP) wajib dihormati batasannya. Jangan menyalahgunakan status AORP untuk lari dari tanggung jawab hukum in-game.'},
-                            {id: 'ig-10', icon: '🌟', title: 'Keep RP Alive', desc: 'Utamakan kenyamanan, keseruan, dan kualitas roleplay bersama.', detail: 'Dukung alur cerita yang sedang berjalan, bangun interaksi yang kreatif dengan warga lain, dan jadikan sesi MoestordRP sebagai tempat bersenang-senang yang imersif.'}
+                            {id: 'ig-10', icon: '🌟', title: 'Keep RP Alive', desc: 'Utamakan kenyamanan, keseruan, dan kualitas roleplay bersama.', detail: 'Dukung alur cerita yang sedang berjalan, bangun interaksi yang kreatif dengan warga lain, dan jadikan sesi MoestordRP Hub sebagai tempat bersenang-senang yang imersif.'}
                         ]" :key="rule.id">
-                            <div @click="toggleRule(rule.id)" class="supreme-glass p-5 sm:p-7 rounded-3xl shadow-xl flex flex-col justify-between space-y-4 border border-sky-500/25 spotlight-card cursor-pointer group h-full">
-                                <div class="flex items-start justify-between gap-3">
+                            <div @click="toggleRule(rule.id)" class="supreme-glass p-5 sm:p-7 rounded-3xl shadow-xl flex flex-col justify-between space-y-4 border border-sky-500/25 spotlight-card cursor-pointer group">
+                                <div class="flex items-center justify-between gap-3">
                                     <div class="flex items-center gap-3.5 min-w-0">
                                         <div class="w-11 h-11 sm:w-12 sm:h-12 bg-sky-500/15 rounded-2xl flex items-center justify-center text-lg sm:text-xl shadow-inner border border-sky-500/30 group-hover:scale-110 transition shrink-0" x-text="rule.icon"></div>
-                                        <h4 class="font-outfit text-sm sm:text-lg font-extrabold text-slate-900 dark:text-white leading-snug" x-text="rule.title"></h4>
+                                        <h4 class="font-outfit text-sm sm:text-lg font-extrabold text-slate-900 dark:text-white leading-snug truncate" x-text="rule.title"></h4>
                                     </div>
                                     <span class="text-[11px] sm:text-xs font-mono text-sky-400 font-bold bg-sky-500/10 px-2.5 sm:px-3 py-1.5 rounded-full border border-sky-500/30 shadow-sm shrink-0" x-text="openRule === rule.id ? 'Tutup ▲' : 'Detail ▼'"></span>
                                 </div>
@@ -606,7 +636,7 @@
                                 {id: 'bc-5', title: 'Kendaraan Tidak Sesuai Tema Session', desc: 'Jika tema host adalah kendaraan harian standar / niaga (seperti Mestibis Canter, Tokoma Kijang, Densu GranMax), membawa mobil sport/modifikasi ekstrem melanggar aturan.'},
                                 {id: 'bc-6', title: 'Digunakan untuk Trolling / Car Ramming', desc: 'Kendaraan jenis apapun yang dipakai sengaja untuk menabrak kerumunan atau membuat kekacauan non-RP akan langsung disita dan diremove dari sesi.'}
                             ]" :key="bc.id">
-                                <div @click="toggleRule(bc.id)" class="p-4 sm:p-5 rounded-2xl sm:rounded-3xl bg-rose-500/5 border border-rose-500/30 flex flex-col gap-3 shadow-sm cursor-pointer group hover:bg-rose-500/10 transition h-full">
+                                <div @click="toggleRule(bc.id)" class="p-4 sm:p-5 rounded-2xl sm:rounded-3xl bg-rose-500/5 border border-rose-500/30 flex flex-col gap-3 shadow-sm cursor-pointer group hover:bg-rose-500/10 transition">
                                     <div class="flex items-center justify-between gap-3">
                                         <div class="flex items-center gap-3 min-w-0">
                                             <span class="text-rose-500 text-base font-bold shrink-0">✖</span>
@@ -627,7 +657,7 @@
                         </div>
                     </div>
 
-                    <!-- Discord Rules Grid & Join Discord Button at the bottom -->
+                    <!-- Discord Rules Grid & Ultimate Join Discord Button -->
                     <div x-show="activeRuleTab === 'discord'" 
                          x-transition:enter="transition ease-out duration-400 transform"
                          x-transition:enter-start="opacity-0 translate-y-4"
@@ -647,11 +677,11 @@
                                 {id: 'dc-9', icon: '⚠️', title: 'No Ping Abuse', desc: 'Dilarang melakukan mention (@) berulang kali kepada Administrator atau Moderator tanpa keperluan penting.', detail: 'Mention staff hanya boleh dilakukan saat membuat tiket atau melaporkan darurat mutlak. Tagging staff sembarangan di general chat akan dikenakan sanksi mute.'},
                                 {id: 'dc-10', icon: '💡', title: 'Constructive Feedback', desc: 'Sampaikan kritik dan saran untuk kemajuan server melalui channel atau tiket khusus dengan bahasa sopan.', detail: 'Kami sangat terbuka terhadap masukan membangun dari komunitas. Salurkan ide perbaikan server melalui jalur formal yang telah disediakan pengurus.'}
                             ]" :key="dc.id">
-                                <div @click="toggleRule(dc.id)" class="supreme-glass p-5 sm:p-7 rounded-3xl shadow-xl flex flex-col justify-between space-y-4 border border-sky-500/25 spotlight-card cursor-pointer group h-full">
-                                    <div class="flex items-start justify-between gap-3">
+                                <div @click="toggleRule(dc.id)" class="supreme-glass p-5 sm:p-7 rounded-3xl shadow-xl flex flex-col justify-between space-y-4 border border-sky-500/25 spotlight-card cursor-pointer group">
+                                    <div class="flex items-center justify-between gap-3">
                                         <div class="flex items-center gap-3.5 min-w-0">
                                             <div class="w-11 h-11 sm:w-12 sm:h-12 bg-sky-500/15 rounded-2xl flex items-center justify-center text-lg sm:text-xl shadow-inner border border-sky-500/30 group-hover:scale-110 transition shrink-0" x-text="dc.icon"></div>
-                                            <h4 class="font-outfit text-sm sm:text-lg font-extrabold text-slate-900 dark:text-white leading-snug" x-text="dc.title"></h4>
+                                            <h4 class="font-outfit text-sm sm:text-lg font-extrabold text-slate-900 dark:text-white leading-snug truncate" x-text="dc.title"></h4>
                                         </div>
                                         <span class="text-[11px] sm:text-xs font-mono text-sky-400 font-bold bg-sky-500/10 px-2.5 sm:px-3 py-1.5 rounded-full border border-sky-500/30 shadow-sm shrink-0" x-text="openRule === dc.id ? 'Tutup ▲' : 'Detail ▼'"></span>
                                     </div>
@@ -667,13 +697,21 @@
                             </template>
                         </div>
 
-                        <!-- TOMBOL JOIN DISCORD PALING BAWAH DI TAB DISCORD -->
-                        <div class="pt-4 flex justify-center">
+                        <!-- ULTIMATE JOIN DISCORD BUTTON -->
+                        <div class="pt-6 flex flex-col items-center justify-center">
                             <button @click="openDiscordGateway()" 
-                                class="w-full sm:w-auto px-10 py-5 rounded-3xl bg-gradient-to-r from-indigo-600 via-sky-600 to-blue-600 hover:opacity-95 text-white font-outfit font-black text-sm sm:text-base flex items-center justify-center gap-3 shadow-2xl shadow-indigo-500/40 transition hover:scale-105 border border-indigo-400/50 group">
-                                <span class="text-2xl group-hover:rotate-12 transition">💬</span>
-                                <span>Join Discord MoestordRP</span>
-                                <span class="text-xl">→</span>
+                                class="relative group overflow-hidden rounded-3xl p-px font-outfit font-black shadow-2xl shadow-indigo-500/30 transition-all duration-300 hover:scale-105 active:scale-95 w-full sm:w-auto">
+                                <span class="absolute inset-0 bg-gradient-to-r from-sky-400 via-indigo-500 to-blue-600 rounded-3xl animate-pulse-glow"></span>
+                                <div class="relative px-8 sm:px-12 py-5 rounded-3xl bg-slate-950/80 dark:bg-slate-900/90 backdrop-blur-xl flex items-center justify-center gap-4 text-white border border-sky-500/40 group-hover:bg-transparent transition duration-300">
+                                    <div class="w-10 h-10 rounded-2xl bg-indigo-500/20 border border-indigo-500/40 flex items-center justify-center text-xl text-sky-400 shadow-inner">
+                                        💬
+                                    </div>
+                                    <div class="text-left">
+                                        <div class="text-sm sm:text-base font-extrabold tracking-tight">Join Official Discord</div>
+                                        <div class="text-[11px] font-mono text-sky-400 font-semibold tracking-wider">MoestordRP Hub Community</div>
+                                    </div>
+                                    <span class="text-xl text-sky-400 transform group-hover:translate-x-1.5 transition duration-300">→</span>
+                                </div>
                             </button>
                         </div>
                     </div>
@@ -708,7 +746,7 @@
                             <div class="space-y-2">
                                 <h4 class="font-outfit font-extrabold text-sm sm:text-lg text-slate-900 dark:text-white">Persyaratan Umum</h4>
                                 <p class="text-xs sm:text-sm">
-                                    Kandidat wajib memiliki komitmen tinggi, aktif, memahami seluruh rules, serta memiliki etika komunikasi yang baik di dalam komunitas MoestordRP.
+                                    Kandidat wajib memiliki komitmen tinggi, aktif, memahami seluruh rules, serta memiliki etika komunikasi yang baik di dalam komunitas MoestordRP Hub.
                                 </p>
                             </div>
                         </div>
@@ -757,7 +795,7 @@
 
         <!-- FOOTER -->
         <footer class="mt-16 sm:mt-20 border-t border-sky-500/20 py-8 sm:py-10 text-center text-xs font-mono text-slate-500 supreme-glass px-4">
-            <p>&copy; MoestordRP &bull; An CDID Roleplay Group. All Rights Reserved.</p>
+            <p>&copy; MoestordRP Hub &bull; An CDID Roleplay Group. All Rights Reserved.</p>
         </footer>
 
     </div>
