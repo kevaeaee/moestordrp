@@ -89,15 +89,15 @@
             box-shadow: 0 15px 35px -10px rgba(0, 0, 0, 0.5);
         }
 
-        /* High-End Premium Theme Switcher UI */
+        /* Ultra Inertial Smooth Theme Switcher UI */
         .theme-switch {
-            width: 82px;
-            height: 38px;
+            width: 86px;
+            height: 40px;
             border-radius: 9999px;
             position: relative;
             cursor: pointer;
-            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-            box-shadow: inset 0 3px 8px rgba(0, 0, 0, 0.4), 0 2px 4px rgba(255, 255, 255, 0.15);
+            transition: all 0.9s cubic-bezier(0.25, 1, 0.5, 1);
+            box-shadow: inset 0 3px 8px rgba(0, 0, 0, 0.4), 0 2px 6px rgba(255, 255, 255, 0.15);
             overflow: hidden;
         }
 
@@ -491,31 +491,34 @@
                         </div>
                     </div>
 
-                    <!-- FULL DETAILED SUN/MOON THEME TOGGLE SWITCH -->
+                    <!-- ULTRA INERTIAL SMOOTH FULLSCREEN EMOJI THEME TOGGLE SWITCH -->
                     <div @click="toggleTheme()" 
-                         class="theme-switch relative flex items-center p-1 select-none shadow-xl border"
-                         :class="darkMode ? 'bg-slate-950 border-slate-800' : 'bg-gradient-to-r from-sky-300 via-sky-200 to-blue-300 border-sky-300'"
+                         class="theme-switch relative flex items-center p-1 select-none border shadow-xl overflow-hidden"
+                         :class="darkMode ? 'bg-slate-950 border-slate-800' : 'bg-sky-200 border-sky-300'"
                          title="Ganti Tema">
                         
-                        <div class="absolute inset-0 flex items-center justify-between px-2 pointer-events-none overflow-hidden">
-                            <template x-if="!darkMode">
-                                <div class="flex items-center gap-1.5 opacity-90">
-                                    <span class="text-[10px]">☁️</span>
-                                    <span class="text-[8px]">☁️</span>
+                        <!-- Random Scattered Background Elements (Stars for Dark, Clouds for Light) -->
+                        <div class="absolute inset-0 pointer-events-none overflow-hidden transition-opacity duration-700">
+                            <template x-if="darkMode">
+                                <div class="w-full h-full relative opacity-70">
+                                    <span class="absolute text-[7px] top-1 left-3 animate-pulse">✨</span>
+                                    <span class="absolute text-[9px] top-4 left-7">⭐</span>
+                                    <span class="absolute text-[6px] bottom-1 left-5 animate-pulse">✨</span>
+                                    <span class="absolute text-[8px] top-2 left-11">⭐</span>
                                 </div>
                             </template>
-                            <template x-if="darkMode">
-                                <div class="flex items-center gap-2 opacity-95 ml-1">
-                                    <span class="text-[9px]">✨</span>
-                                    <span class="text-[7px]">⭐</span>
-                                    <span class="text-[8px]">✨</span>
+                            <template x-if="!darkMode">
+                                <div class="w-full h-full relative opacity-90">
+                                    <span class="absolute text-[10px] top-1 right-3">☁️</span>
+                                    <span class="absolute text-[7px] bottom-1 right-7">☁️</span>
                                 </div>
                             </template>
                         </div>
 
-                        <div class="w-8 h-8 rounded-full shadow-2xl flex items-center justify-center transform transition-all duration-500 ease-out z-10"
-                             :class="darkMode ? 'translate-x-[44px] bg-amber-100 text-amber-900 shadow-amber-500/30' : 'translate-x-0 bg-amber-400 text-white shadow-amber-400/50'">
-                            <span class="text-sm transition-transform duration-500" x-text="darkMode ? '🌕' : '☀️'"></span>
+                        <!-- Fullscreen Emoji Thumb (Sun / Moon) with Inertial Damping -->
+                        <div class="w-8 h-8 rounded-full shadow-lg flex items-center justify-center transform transition-all duration-[900ms] ease-[cubic-bezier(0.25,1,0.5,1)] z-10"
+                             :class="darkMode ? 'translate-x-[46px] bg-amber-200 text-amber-950 shadow-amber-500/30 rotate-[360deg]' : 'translate-x-0 bg-amber-400 text-white shadow-amber-400/50 rotate-0'">
+                            <span class="text-lg leading-none transform transition-transform duration-700" x-text="darkMode ? '🌕' : '☀️'"></span>
                         </div>
                     </div>
 
@@ -546,8 +549,8 @@
             <div class="flex justify-center mb-10 sm:mb-12 overflow-x-auto py-3">
                 <div class="clean-nav-glass p-2 sm:p-2.5 rounded-[2.5rem] sm:rounded-full relative flex items-center w-full max-w-2xl min-w-[320px] overflow-hidden">
                     
-                    <!-- Absolute Sliding Pill Indicator with Clean Glow -->
-                    <div class="absolute h-[calc(100%-16px)] top-2 rounded-full bg-gradient-to-r from-sky-500 to-indigo-600 shadow-md shadow-sky-500/40 transition-all duration-400 ease-out z-0"
+                    <!-- Absolute Sliding Pill Indicator with Inertial Smooth Damping -->
+                    <div class="absolute h-[calc(100%-16px)] top-2 rounded-full bg-gradient-to-r from-sky-500 to-indigo-600 shadow-md shadow-sky-500/40 transition-all duration-[700ms] ease-[cubic-bezier(0.25,1,0.5,1)] z-0"
                          :style="activeTab === 'pendahuluan' ? 'left: 8px; width: calc(25% - 6px);' : 
                                  activeTab === 'rules' ? 'left: calc(25% + 3px); width: calc(25% - 6px);' : 
                                  activeTab === 'recruitment' ? 'left: calc(50% + 3px); width: calc(25% - 6px);' : 
