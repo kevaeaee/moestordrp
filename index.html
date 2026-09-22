@@ -73,6 +73,34 @@
             box-shadow: 0 40px 90px -20px rgba(0, 0, 0, 0.85), inset 0 1px 0 rgba(56, 189, 248, 0.25);
         }
 
+        /* Clean Shadow-Free Glass for Navigation Pill Bar */
+        .clean-nav-glass {
+            background: rgba(255, 255, 255, 0.92);
+            backdrop-filter: blur(40px);
+            -webkit-backdrop-filter: blur(40px);
+            border: 1px solid rgba(56, 189, 248, 0.35);
+            box-shadow: 0 10px 30px -10px rgba(56, 189, 248, 0.2);
+        }
+        .dark .clean-nav-glass {
+            background: rgba(10, 16, 30, 0.82);
+            backdrop-filter: blur(40px);
+            -webkit-backdrop-filter: blur(40px);
+            border: 1px solid rgba(56, 189, 248, 0.25);
+            box-shadow: 0 15px 35px -10px rgba(0, 0, 0, 0.5);
+        }
+
+        /* High-End Premium Theme Switcher UI */
+        .theme-switch {
+            width: 82px;
+            height: 38px;
+            border-radius: 9999px;
+            position: relative;
+            cursor: pointer;
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: inset 0 3px 8px rgba(0, 0, 0, 0.4), 0 2px 4px rgba(255, 255, 255, 0.15);
+            overflow: hidden;
+        }
+
         /* Interactive Spotlight & Magnetic Hover */
         .spotlight-card {
             position: relative;
@@ -128,7 +156,7 @@
         activeTab: 'pendahuluan',
         activeRuleTab: 'ingame',
         sfxEnabled: true,
-        sfxVolume: parseInt(localStorage.getItem('moestord_sfx_vol')) || 75, // UI range 50-100
+        sfxVolume: parseInt(localStorage.getItem('moestord_sfx_vol')) || 75,
         showVolumeSlider: false,
         audioCtx: null,
         openRule: null,
@@ -156,7 +184,6 @@
                 osc.connect(gain);
                 gain.connect(ctx.destination);
 
-                // Mapping UI 50-100 to Real Gain 0.5 to 3.5 (50% - 350%)
                 const multiplier = (this.sfxVolume / 50) * 1.75; 
 
                 if (type === 'click') {
@@ -331,17 +358,13 @@
          style="display: none;">
         
         <div class="supreme-glass p-8 sm:p-10 rounded-[3rem] shadow-2xl max-w-sm w-full text-center space-y-6 relative overflow-hidden border border-sky-500/50">
-            <!-- Glowing ambient effects -->
             <div class="absolute -top-24 -left-24 w-56 h-56 bg-sky-500/30 rounded-full blur-3xl pointer-events-none animate-pulse-glow"></div>
             <div class="absolute -bottom-24 -right-24 w-56 h-56 bg-indigo-500/30 rounded-full blur-3xl pointer-events-none animate-pulse-glow"></div>
             
             <div class="relative z-10 space-y-5">
-                <!-- Precision Circular Progress Ring (Zero-Synced, Smooth Linear) -->
                 <div class="relative w-32 h-32 mx-auto flex items-center justify-center">
                     <svg class="w-full h-full transform -rotate-90" viewBox="0 0 120 120">
-                        <!-- Track Background Ring -->
                         <circle cx="60" cy="60" r="50" stroke="currentColor" stroke-width="6" class="text-slate-800/80" fill="transparent"></circle>
-                        <!-- Perfect Zero-Out Linear Progress Ring (Circumference = 314.16) -->
                         <circle cx="60" cy="60" r="50" stroke="url(#stableGradient)" stroke-width="6" 
                                 :style="`stroke-dasharray: 314.16; stroke-dashoffset: ${314.16 * (discordCountdown / 3)};`"
                                 stroke-linecap="round" fill="transparent" class="transition-all duration-1000 ease-linear"></circle>
@@ -353,7 +376,6 @@
                         </defs>
                     </svg>
 
-                    <!-- Center Stable Counter / Ready Display (No Bounce) -->
                     <div class="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
                         <template x-if="discordCountdown > 0">
                             <div class="flex flex-col items-center animate-scale-in">
@@ -378,7 +400,6 @@
                 </div>
             </div>
 
-            <!-- Ultimate High-End Action Buttons -->
             <div class="grid grid-cols-2 gap-3 relative z-10 pt-2">
                 <button @click="closeDiscordGateway()" 
                     class="py-3.5 px-4 rounded-2xl bg-slate-200/80 dark:bg-slate-900/80 hover:bg-slate-300 dark:hover:bg-slate-800 text-slate-800 dark:text-slate-200 font-outfit font-bold text-xs transition border border-slate-300 dark:border-slate-800 shadow-sm">
@@ -433,7 +454,7 @@
                 </div>
 
                 <!-- Controls -->
-                <div class="flex items-center gap-2 sm:gap-3.5 shrink-0">
+                <div class="flex items-center gap-2.5 sm:gap-4 shrink-0">
                     
                     <!-- ADVANCED SFX BUTTON WITH HOVER / DOUBLE-TAP VOLUME SLIDER -->
                     <div class="relative" 
@@ -442,11 +463,11 @@
                          
                         <button @click="sfxEnabled = !sfxEnabled; playSfx('click')" 
                             @dblclick="showVolumeSlider = !showVolumeSlider"
-                            class="px-3 sm:px-4 py-2 sm:py-2.5 rounded-xl sm:rounded-2xl bg-slate-200/80 dark:bg-slate-800/80 hover:bg-slate-300 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 border border-slate-300/60 dark:border-slate-700/60 flex items-center gap-1.5 text-[11px] sm:text-xs font-mono font-bold transition shadow-sm hover:border-sky-500/60 select-none">
+                            class="px-3.5 sm:px-4.5 py-2.5 rounded-xl sm:rounded-2xl bg-slate-200/80 dark:bg-slate-800/80 hover:bg-slate-300 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 border border-slate-300/60 dark:border-slate-700/60 flex items-center gap-1.5 text-[11px] sm:text-xs font-mono font-bold transition shadow-sm hover:border-sky-500/60 select-none">
                             <span x-text="sfxEnabled ? '🔊 SFX' : '🔇 SFX'"></span>
                         </button>
 
-                        <!-- VOLUME POPUP SLIDER (50 - 100 UI Range, Backend 50 - 350) -->
+                        <!-- VOLUME POPUP SLIDER -->
                         <div x-show="showVolumeSlider" 
                              x-transition:enter="transition ease-out duration-200 transform"
                              x-transition:enter-start="opacity-0 scale-95 translate-y-2"
@@ -470,16 +491,34 @@
                         </div>
                     </div>
 
-                    <button @click="toggleTheme()" 
-                        class="p-2.5 sm:p-3 rounded-xl sm:rounded-2xl bg-slate-200/80 dark:bg-slate-800/80 hover:bg-slate-300 dark:hover:bg-slate-700 text-slate-800 dark:text-amber-400 shadow-sm border border-slate-300/60 dark:border-slate-700/60 flex items-center justify-center transition group hover:border-sky-500/60"
-                        title="Ganti Tema">
-                        <svg x-show="!darkMode" xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 sm:w-5 sm:h-5 transition group-hover:rotate-180" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
-                        </svg>
-                        <svg x-show="darkMode" xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 sm:w-5 sm:h-5 transition group-hover:-rotate-180" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z" />
-                        </svg>
-                    </button>
+                    <!-- FULL DETAILED SUN/MOON THEME TOGGLE SWITCH -->
+                    <div @click="toggleTheme()" 
+                         class="theme-switch relative flex items-center p-1 select-none shadow-xl border"
+                         :class="darkMode ? 'bg-slate-950 border-slate-800' : 'bg-gradient-to-r from-sky-300 via-sky-200 to-blue-300 border-sky-300'"
+                         title="Ganti Tema">
+                        
+                        <div class="absolute inset-0 flex items-center justify-between px-2 pointer-events-none overflow-hidden">
+                            <template x-if="!darkMode">
+                                <div class="flex items-center gap-1.5 opacity-90">
+                                    <span class="text-[10px]">☁️</span>
+                                    <span class="text-[8px]">☁️</span>
+                                </div>
+                            </template>
+                            <template x-if="darkMode">
+                                <div class="flex items-center gap-2 opacity-95 ml-1">
+                                    <span class="text-[9px]">✨</span>
+                                    <span class="text-[7px]">⭐</span>
+                                    <span class="text-[8px]">✨</span>
+                                </div>
+                            </template>
+                        </div>
+
+                        <div class="w-8 h-8 rounded-full shadow-2xl flex items-center justify-center transform transition-all duration-500 ease-out z-10"
+                             :class="darkMode ? 'translate-x-[44px] bg-amber-100 text-amber-900 shadow-amber-500/30' : 'translate-x-0 bg-amber-400 text-white shadow-amber-400/50'">
+                            <span class="text-sm transition-transform duration-500" x-text="darkMode ? '🌕' : '☀️'"></span>
+                        </div>
+                    </div>
+
                 </div>
             </div>
         </header>
@@ -503,34 +542,36 @@
                 </p>
             </div>
 
-            <!-- SLIDING PILL TAB NAVIGATION -->
-            <div class="flex justify-center mb-10 sm:mb-12 overflow-x-auto py-2">
-                <div class="supreme-glass p-1.5 sm:p-2 rounded-2xl sm:rounded-3xl shadow-2xl relative flex items-center w-full max-w-2xl border border-sky-500/40 min-w-[320px]">
-                    <div class="absolute h-[calc(100%-12px)] sm:h-[calc(100%-16px)] top-1.5 sm:top-2 rounded-xl sm:rounded-2xl bg-gradient-to-r from-sky-500 to-indigo-600 shadow-xl shadow-sky-500/35 transition-all duration-400 ease-out z-0"
-                         :style="activeTab === 'pendahuluan' ? 'left: 6px; width: calc(25% - 4px);' : 
-                                 activeTab === 'rules' ? 'left: calc(25% + 2px); width: calc(25% - 4px);' : 
-                                 activeTab === 'recruitment' ? 'left: calc(50% + 2px); width: calc(25% - 4px);' : 
-                                 'left: calc(75% + 2px); width: calc(25% - 6px);'">
+            <!-- SLIDING PILL TAB NAVIGATION (ABSOLUTELY CLEAN SHADOW-FREE BAR) -->
+            <div class="flex justify-center mb-10 sm:mb-12 overflow-x-auto py-3">
+                <div class="clean-nav-glass p-2 sm:p-2.5 rounded-[2.5rem] sm:rounded-full relative flex items-center w-full max-w-2xl min-w-[320px] overflow-hidden">
+                    
+                    <!-- Absolute Sliding Pill Indicator with Clean Glow -->
+                    <div class="absolute h-[calc(100%-16px)] top-2 rounded-full bg-gradient-to-r from-sky-500 to-indigo-600 shadow-md shadow-sky-500/40 transition-all duration-400 ease-out z-0"
+                         :style="activeTab === 'pendahuluan' ? 'left: 8px; width: calc(25% - 6px);' : 
+                                 activeTab === 'rules' ? 'left: calc(25% + 3px); width: calc(25% - 6px);' : 
+                                 activeTab === 'recruitment' ? 'left: calc(50% + 3px); width: calc(25% - 6px);' : 
+                                 'left: calc(75% + 3px); width: calc(25% - 9px);'">
                     </div>
 
                     <button @click="switchTab('pendahuluan')"
                         :class="activeTab === 'pendahuluan' ? 'text-white font-extrabold' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'"
-                        class="flex-1 py-2.5 sm:py-3.5 text-[11px] sm:text-sm font-outfit relative z-10 transition-colors text-center truncate px-1">
+                        class="flex-1 py-3 sm:py-3.5 text-[11px] sm:text-sm font-outfit relative z-10 transition-colors text-center truncate px-1">
                         Pendahuluan
                     </button>
                     <button @click="switchTab('rules')"
                         :class="activeTab === 'rules' ? 'text-white font-extrabold' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'"
-                        class="flex-1 py-2.5 sm:py-3.5 text-[11px] sm:text-sm font-outfit relative z-10 transition-colors text-center truncate px-1">
+                        class="flex-1 py-3 sm:py-3.5 text-[11px] sm:text-sm font-outfit relative z-10 transition-colors text-center truncate px-1">
                         Rules
                     </button>
                     <button @click="switchTab('recruitment')"
                         :class="activeTab === 'recruitment' ? 'text-white font-extrabold' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'"
-                        class="flex-1 py-2.5 sm:py-3.5 text-[11px] sm:text-sm font-outfit relative z-10 transition-colors text-center truncate px-1">
+                        class="flex-1 py-3 sm:py-3.5 text-[11px] sm:text-sm font-outfit relative z-10 transition-colors text-center truncate px-1">
                         Recruitment
                     </button>
                     <button @click="switchTab('session')"
                         :class="activeTab === 'session' ? 'text-white font-extrabold' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'"
-                        class="flex-1 py-2.5 sm:py-3.5 text-[11px] sm:text-sm font-outfit relative z-10 transition-colors text-center truncate px-1">
+                        class="flex-1 py-3 sm:py-3.5 text-[11px] sm:text-sm font-outfit relative z-10 transition-colors text-center truncate px-1">
                         Session
                     </button>
                 </div>
