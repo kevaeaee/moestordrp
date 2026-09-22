@@ -128,7 +128,7 @@
         activeTab: 'pendahuluan',
         activeRuleTab: 'ingame',
         sfxEnabled: true,
-        sfxVolume: parseInt(localStorage.getItem('moestord_sfx_vol')) || 75, // UI range 50-100, actual 50-200
+        sfxVolume: parseInt(localStorage.getItem('moestord_sfx_vol')) || 75, // UI range 50-100
         showVolumeSlider: false,
         audioCtx: null,
         openRule: null,
@@ -156,8 +156,8 @@
                 osc.connect(gain);
                 gain.connect(ctx.destination);
 
-                // Mapping UI 50-100 to Real Gain 0.5 to 2.0 (50% - 200%)
-                const multiplier = (this.sfxVolume / 50); 
+                // Mapping UI 50-100 to Real Gain 0.5 to 3.5 (50% - 350%)
+                const multiplier = (this.sfxVolume / 50) * 1.75; 
 
                 if (type === 'click') {
                     osc.type = 'sine';
@@ -446,7 +446,7 @@
                             <span x-text="sfxEnabled ? '🔊 SFX' : '🔇 SFX'"></span>
                         </button>
 
-                        <!-- VOLUME POPUP SLIDER (50 - 100 UI Range) with Smooth Open/Close Animation -->
+                        <!-- VOLUME POPUP SLIDER (50 - 100 UI Range, Backend 50 - 350) -->
                         <div x-show="showVolumeSlider" 
                              x-transition:enter="transition ease-out duration-200 transform"
                              x-transition:enter-start="opacity-0 scale-95 translate-y-2"
